@@ -38,7 +38,7 @@ body {margin:0;}
 th, td {
   padding: 5px;
   text-align: left;
-  width: 400px;
+  width: 300px;
 }
 
 </style>
@@ -67,43 +67,51 @@ th, td {
 			
             </div>
 <div class="main">
-		<table>
-			<tr>
-				<th><b>Summary</b></th>
-			</tr>
-			<tr>
-				<td>What you have
-				<br>
-				<a href="{{url_for('depositaccounts', CustomerID = CustomerID)}}"><img src="{{ url_for('static', filename='savings.png') }}" width="75" height=""/></a>
+    <form action = "{{ url_for('transferred', CustomerID = CustomerID ) }}" method="POST">
+	<table>
+	<tr>
+		<td>
+       <fieldset>
+          <legend>Sender</legend>
+          <p>
+             <label>Select account</label>
+             <select name="Sender" id="Sender">
+			   {% for record in cursor %}
+               <option value = {{record[3]}}>{{record[3]}}, SGD ${{record[4] | round(2, 'floor')}}</option>
+			   {% endfor %}
+             </select>
+          </p>
+       </fieldset>
+	   </td>
+	   </tr>
+	   <tr>
+	   		<td>
+       <fieldset>
+          <legend>Recipient</legend>
+          <p>
+            <label>Select account</label>
+             <select name="Receiver" id="Receiver">
+			   {% for record in cursor %}
+               <option value = {{record[3]}}>{{record[3]}}, SGD ${{record[4] | round(2, 'floor')}}</option>
+			   {% endfor %}
+             </select>
+          </p>
+       </fieldset>
+	   </td>
+	   
+	   </tr>
+	   <tr>
+	   				
+					<td>Enter Amount SGD $ <input name = "Amount">
 				</td>
-				<td><b>SGD $ {{Deposit}}</b></td>
-			</tr>
-			<tr>
-				<td>What you owe
-				<br>
-				<a href="{{url_for('creditcards', CustomerID = CustomerID)}}"><img src="{{ url_for('static', filename='creditcard.png') }}" width="75" height=""/></a>
-				
-				</td>
-				<td><b>SGD $ {{Credit}}</b><br>
-				<a href="{{url_for('payment', CustomerID = CustomerID)}}"><img src="{{ url_for('static', filename='paynow.png') }}" width="75" height=""/></a></td>
-			</tr>
-			<tr>
-				<td><b>Recommendations</b></td>
-			</tr>
-			
-			<tr>
-			<td>
-			<img src="{{ url_for('static', filename='ad2.jpg') }}" width="" height="150"/>
-			<img src="{{ url_for('static', filename='ad1.jpg') }}" width="" height="150"/>
-		
-			</td>
-			</tr>
+	   </tr>
+	   <tr>
+	   <td>
+	<input type = "submit" value = "Confirm Transfer"></p>
+	</td>
+	</tr>
+    </form>
 
-								
-		
-			</table>
-				
-		</div>
-				
+</div>			
 </body>
 </html>

@@ -38,7 +38,7 @@ body {margin:0;}
 th, td {
   padding: 5px;
   text-align: left;
-  width: 400px;
+  width: 300px;
 }
 
 </style>
@@ -67,43 +67,47 @@ th, td {
 			
             </div>
 <div class="main">
-		<table>
-			<tr>
-				<th><b>Summary</b></th>
-			</tr>
-			<tr>
-				<td>What you have
-				<br>
-				<a href="{{url_for('depositaccounts', CustomerID = CustomerID)}}"><img src="{{ url_for('static', filename='savings.png') }}" width="75" height=""/></a>
-				</td>
-				<td><b>SGD $ {{Deposit}}</b></td>
-			</tr>
-			<tr>
-				<td>What you owe
-				<br>
-				<a href="{{url_for('creditcards', CustomerID = CustomerID)}}"><img src="{{ url_for('static', filename='creditcard.png') }}" width="75" height=""/></a>
-				
-				</td>
-				<td><b>SGD $ {{Credit}}</b><br>
-				<a href="{{url_for('payment', CustomerID = CustomerID)}}"><img src="{{ url_for('static', filename='paynow.png') }}" width="75" height=""/></a></td>
-			</tr>
-			<tr>
-				<td><b>Recommendations</b></td>
-			</tr>
-			
-			<tr>
-			<td>
-			<img src="{{ url_for('static', filename='ad2.jpg') }}" width="" height="150"/>
-			<img src="{{ url_for('static', filename='ad1.jpg') }}" width="" height="150"/>
-		
-			</td>
-			</tr>
+    <form action = "{{ url_for('paid', CustomerID = CustomerID ) }}" method="POST">
+	<table>
+	<tr><font color = "#0099FF">Payment was unsuccessful.</font></tr>
+	<tr>
+		<td>
+       <fieldset>
+          <legend>My Credit Cards</legend>
+          <p>
+             <label>Select card</label>
+             <select name="CardNumber" id="CardNumber">
+			   {% for record in cursor %}
+               <option value = {{record[0]}}>{{record[0]}}, SGD ${{record[6] | round(2, 'floor')}}</option>
+			   {% endfor %}
+             </select>
+          </p>
+       </fieldset>
+	   </td>
+	   </tr>
+	   <tr>
+	   		<td>
+       <fieldset>
+          <legend>My Savings Accounts</legend>
+          <p>
+             <label>Select account</label>
+               <select name="AccountNumber" id="AccountNumber">
+			   {% for record in cursor2 %}
+               <option value = {{record[3]}}>{{record[3]}}, {{record[6]}}, SGD ${{record[4] | round(2, 'floor')}}</option>
+			   {% endfor %}
+             </select>
+          </p>
+       </fieldset>
+	   </td>
+	   
+	   </tr>
+	   <tr>
+	   <td>
+	<input type = "submit" value = "Confirm Payment"></p>
+	</td>
+	</tr>
+    </form>
 
-								
-		
-			</table>
-				
-		</div>
-				
+</div>			
 </body>
 </html>
