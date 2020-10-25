@@ -112,10 +112,6 @@ def creditcards(CustomerID):
        connection.close()
        return flask.render_template("creditcards.html", cursor = cursor, CustomerID = CustomerID)
 
-@app.route('/transfer/<CustomerID>')
-def transfer(CustomerID):
-       return "Hello " + CustomerID
-
 @app.route('/payment/<CustomerID>')
 def payment(CustomerID):
        connection = sqlite3.connect("BBOOK.db")
@@ -124,8 +120,57 @@ def payment(CustomerID):
        connection.close()
        return flask.render_template("payment.html", cursor = cursor, cursor2 = cursor2, CustomerID = CustomerID)
 
+@app.route('/transfer/<CustomerID>')
+def transfer(CustomerID):
+       connection = sqlite3.connect("BBOOK.db")
+       cursor = connection.execute("SELECT * FROM Account WHERE CustomerID = ? AND AccountType = ?", (CustomerID, "Savings")).fetchall()
+       connection.close()
+       return flask.render_template("transfer.html", cursor = cursor, CustomerID = CustomerID)
+
+@app.route('/transferred/<CustomerID>', methods = ["POST"])
+def transferred(CustomerID):
+       today = dt.datetime.now()
+       date = str(today.day)+"/"+str(today.month)+"/"+str(today.year)
+       time = str(today.hour)+":"+str(today.min)+":00"
+       data = flask.request.form
+       Sender = data["Sender"]
+       Receiver = data["Receiver"]
+       AmountDue = float(data["Amount"])
+
+       connection = sqlite3.connect("BBOOK.db")
+       cursor = connection.execute("SELECT Balance FROM Account WHERE AccountNumber = ? ", (Sender,)).fetchall()
+       balance = cursor[0][0]
+
+       if balance < AmountDue:
+              connection = sqlite3.connect("BBOOK.db")
+              cursor = connection.execute("SELECT * FROM Account WHERE CustomerID = ? AND AccountType = ?", (CustomerID, "Savings")).fetchall()
+              connection.close()
+              return flask.render_template("transfer.html", cursor = cursor, CustomerID = CustomerID)
+       else:
+              connection.execute("UPDATE Account SET Balance = ? WHERE AccountNumber = ? ", (balance - AmountDue, Sender))
+              connection.commit()
+              cursor = connection.execute("SELECT Balance FROM Account WHERE AccountNumber = ? ", (Receiver,)).fetchall()
+              newamount = cursor[0][0]
+              connection.execute("UPDATE Account SET Balance = ? WHERE AccountNumber = ? ", (newamount + AmountDue, Receiver))
+              connection.commit()
+              connection.execute("INSERT INTO AccountTransaction VALUES (?,?,?,?,?)", (int(Sender), date, time, AmountDue, "Fund Transfer" ))
+              connection.commit()
+              connection.execute("INSERT INTO AccountTransaction VALUES (?,?,?,?,?)", (int(Receiver), date, time, AmountDue, "Fund Transfer" ))
+              connection.commit()
+              cursor = connection.execute("SELECT SUM(Balance) FROM Account WHERE CustomerID = ? ", (CustomerID,)).fetchall()
+              Deposit = round(cursor[0][0],2)
+              cursor = connection.execute("SELECT SUM(AmountDue) FROM CreditCard WHERE CustomerID = ? ", (CustomerID,)).fetchall()
+              Credit = round(cursor[0][0],2)
+
+       connection.close()
+       return flask.render_template("home.html", CustomerID = CustomerID, Deposit=Deposit, Credit=Credit)
+
+
 @app.route('/paid/<CustomerID>', methods = ["POST"])
 def paid(CustomerID):
+       today = dt.datetime.now()
+       date = str(today.day)+"/"+str(today.month)+"/"+str(today.year)
+       time = "20:00:00"
        data = flask.request.form
        CardNumber = data["CardNumber"]
        AccountNum = data["AccountNumber"]
@@ -138,18 +183,19 @@ def paid(CustomerID):
        AmountDue = cursor[0][0]
     
        if balance < AmountDue:
-              cursor = connection.execute("SELECT SUM(Balance) FROM Account WHERE CustomerID = ? ", (CustomerID,)).fetchall()
-              Deposit = round(cursor[0][0],2)
-              cursor = connection.execute("SELECT SUM(AmountDue) FROM CreditCard WHERE CustomerID = ? ", (CustomerID,)).fetchall()
-              Credit = round(cursor[0][0],2)
+              connection = sqlite3.connect("BBOOK.db")
+              cursor = connection.execute("SELECT * FROM CreditCard WHERE CustomerID = ?", (CustomerID,)).fetchall()
+              cursor2 = connection.execute("SELECT * FROM Account, Bank WHERE CustomerID = ? AND Account.BankID = Bank.BankID", (CustomerID,)).fetchall()
               connection.close()
-              return flask.render_template("home.html", CustomerID = CustomerID, Deposit=Deposit, Credit=Credit)         
+              return flask.render_template("unsuccessful.html", cursor = cursor, cursor2 = cursor2, CustomerID = CustomerID)
        else:
               results = [{'status': 'success', 'message': 'if any'}]
               connection.execute("UPDATE Account SET Balance = ? WHERE AccountNumber = ? ", (balance - AmountDue, AccountNum,))
               connection.commit()
               newamount = 0
               connection.execute("UPDATE CreditCard SET AmountDue = ? WHERE CardNumber = ? ", (newamount, CardNumber,))
+              connection.commit()
+              connection.execute("INSERT INTO AccountTransaction VALUES (?,?,?,?,?)", (int(AccountNum), date, time, AmountDue, "Card Payment" ))
               connection.commit()
               cursor = connection.execute("SELECT SUM(Balance) FROM Account WHERE CustomerID = ? ", (CustomerID,)).fetchall()
               Deposit = round(cursor[0][0],2)
@@ -166,22 +212,25 @@ def insights(CustomerID):
        months = ["Jan","Feb","Mar","April","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
 
        thismonth = months[month-1]
+
+       command = """select SUM(CreditCardTransaction.Amount), CreditCardTransaction.Category 
+       from CreditCard, CreditCardTransaction
+       where CreditCard.CardNumber =  CreditCardTransaction.CardNumber
+       and CreditCard.CustomerID = ? and CreditCardTransaction.Month = ?
+       group by Category
+       """
        connection = sqlite3.connect("BBOOK.db")
-       cursor = connection.execute("SELECT CardNumber FROM CreditCard WHERE CustomerID = ?", (CustomerID,)).fetchall()
-       cards = []
-       results = []
+       cursor = connection.execute(command, (CustomerID, thismonth)).fetchall()
+
+       pie_labels = []
+       pie_values = []
+       colors = ["#0066FF","#0099FF","#003366","#888888","#009999","#003399"]
 
        for record in cursor:
-              cards.append(record[0])
+              if record[1] != "Cashback":
+                     pie_labels.append(record[1])
+              pie_values.append(abs(record[0]))            
 
-       for card in cards:              
-              cursor = connection.execute("SELECT CardNumber, SUM(Amount), Month, Category from CreditCardTransaction where CardNumber = ? and Month = ? group by Category ", (card, thismonth)).fetchall()
-              results.append(cursor)
-       connection.close()
-
-       pie_labels = ["Online Shopping","B","C"]
-       pie_values = [300,100,600]
-       colors = ["#F7464A", "#46BFBD","#808080"]
 
        return flask.render_template('pie_chart.html', title='Your Expenses in Oct', max=17000, set=zip(pie_values, pie_labels, colors),set2=zip(pie_labels, colors), CustomerID = CustomerID)
 
