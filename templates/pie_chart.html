@@ -75,13 +75,19 @@ th, td {
 			
             </div>
 <div class="main">
+<table>
+<tr>
+<td>
     <h3>{{ title }}</h3>
 	{{cursor}}
 	{% for label, colors in set2 %}
 		<p style= "color:{{colors}}" >{{label}}</p>
 	{% endfor %}
-	<br>
-    <canvas id="chart" width="600" height="400"></canvas>
+</td></tr>
+<tr>
+<td>
+	
+    <canvas id="chart" width="300" height="200"></canvas>
     <script>
       var pieData = [
         {% for item, label, colors in set %}
@@ -102,6 +108,7 @@ th, td {
       new Chart(document.getElementById("chart").getContext("2d")).Pie(pieData);
 
     </script>
+	</td></tr>
 </div>
 </body>
 </html>
