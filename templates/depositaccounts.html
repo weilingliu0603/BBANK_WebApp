@@ -74,7 +74,7 @@ th, td {
 			<tr>
 				<td>{{record[6]}}<br>{{record[2]}} Account<br>{{record[3]}}
 				</td>
-				<td><h3>SGD $ {{record[4]}}</h3></td>
+				<td><h3>SGD $ {{record[4] | round(2, 'floor') }}</h3></td>
 			{% endfor %}
 		</div>
 				

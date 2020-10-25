@@ -76,7 +76,7 @@ th, td {
 			<tr>
 				<td>{{record[6]}}<br>{{record[2]}} Account<br>{{record[3]}}
 				</td>
-				<td><h3>SGD $ {{record[4]}}</h3></td>
+				<td><h3>SGD $ {{record[4] | round(2, 'floor') }}</h3></td>
 			{% endfor %}
 
 			<tr>
@@ -86,7 +86,7 @@ th, td {
 			<tr>
 				<td>{{record[1]}}<br>{{record[4]}}<br>{{record[0]}}
 				</td>
-				<td><h3>SGD $ {{record[6]}}</h3></td>
+				<td><h3>SGD $ {{record[6] | round(2, 'floor') }}</h3></td>
 			{% endfor %}
 		</table>
 </div>			

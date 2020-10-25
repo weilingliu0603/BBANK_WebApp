@@ -68,18 +68,18 @@ th, td {
 <div class="main">
 		<table>
 			<tr>
-				<td><b>Your spending in {{results[0][0][2]}}</b></td>
+				<td style= "width:150px"><b>Your spending in {{results[0][0][2]}}</b></td>
 			</tr>
 				{% for card in results %}
-					<tr><td><font color = "#0099FF">{{card[0][0]}}</font></td></tr>
+					<tr><td style= "width:180px"><font color = "#0099FF">{{card[0][0]}}</font></td></tr>
 					<tr>
 					{% for record in card %}
-					<td>{{record[3]}}</td>
+					<td style= "width:180px">{{record[3]}}</td>
 					{% endfor %}
 					</tr>
 					<tr>
 					{% for record in card %}
-					<td>{{record[1]}}</td>
+					<td style= "width:180px">{{record[1]}}</td>
 					{% endfor %}
 					</tr>
 				{% endfor %}
