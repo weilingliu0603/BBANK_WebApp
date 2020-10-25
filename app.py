@@ -3,6 +3,19 @@ import sqlite3
 from flask import jsonify
 import datetime as dt
 
+labels = [
+    'ONLINE SHOPPING', 'DINING'
+]
+
+values = [
+    967.67, 1190.89
+]
+
+colors = [
+    "#F7464A", "#46BFBD"
+]
+
+
 app = flask.Flask(__name__)
 
 @app.route("/")
@@ -58,7 +71,7 @@ def login():
         cursor = connection.execute("SELECT SUM(Balance) FROM Account WHERE CustomerID = ? ", (CustomerID,)).fetchall()
         Deposit = cursor[0][0]
         cursor = connection.execute("SELECT SUM(AmountDue) FROM CreditCard WHERE CustomerID = ? ", (CustomerID,)).fetchall()
-        Credit = abs(cursor[0][0])
+        Credit = cursor[0][0]
         connection.close()
         return flask.render_template("home.html", CustomerID = CustomerID, Deposit=Deposit, Credit=Credit)
         
@@ -66,12 +79,98 @@ def login():
         connection.close()
         return flask.render_template("index.html")
        
+@app.route('/main/<CustomerID>')
+def main(CustomerID):
+        connection = sqlite3.connect("BBOOK.db")
+        cursor = connection.execute("SELECT SUM(Balance) FROM Account WHERE CustomerID = ? ", (CustomerID,)).fetchall()
+        Deposit = round(cursor[0][0],2)
+        cursor = connection.execute("SELECT SUM(AmountDue) FROM CreditCard WHERE CustomerID = ? ", (CustomerID,)).fetchall()
+        Credit = round(cursor[0][0],2)
+        connection.close()
+       
+        return flask.render_template("home.html", CustomerID = CustomerID, Deposit=Deposit, Credit=Credit)
+       
 @app.route('/accounts/<CustomerID>')
 def accounts(CustomerID):
        connection = sqlite3.connect("BBOOK.db")
        cursor = connection.execute("SELECT * FROM Account, Bank WHERE CustomerID = ? AND Account.BankID = Bank.BankID", (CustomerID,)).fetchall()
-       return flask.render_template("accounts.html", cursor = cursor)
+       cursor2 = connection.execute("SELECT * FROM CreditCard WHERE CustomerID = ?", (CustomerID,)).fetchall()
+       connection.close()
+       return flask.render_template("accounts.html", cursor = cursor, cursor2 = cursor2, CustomerID = CustomerID)
 
+@app.route('/depositaccounts/<CustomerID>')
+def depositaccounts(CustomerID):
+       connection = sqlite3.connect("BBOOK.db")
+       cursor = connection.execute("SELECT * FROM Account, Bank WHERE CustomerID = ? AND Account.BankID = Bank.BankID", (CustomerID,)).fetchall()
+       connection.close()
+       return flask.render_template("depositaccounts.html", cursor = cursor, CustomerID = CustomerID)
+
+@app.route('/creditcards/<CustomerID>')
+def creditcards(CustomerID):
+       connection = sqlite3.connect("BBOOK.db")
+       cursor = connection.execute("SELECT * FROM CreditCard WHERE CustomerID = ?", (CustomerID,)).fetchall()
+       connection.close()
+       return flask.render_template("creditcards.html", cursor = cursor, CustomerID = CustomerID)
+
+@app.route('/transfer/<CustomerID>')
+def transfer(CustomerID):
+       return "Hello " + CustomerID
+
+@app.route('/payment/<CustomerID>')
+def payment(CustomerID):
+       connection = sqlite3.connect("BBOOK.db")
+       cursor = connection.execute("SELECT * FROM CreditCard WHERE CustomerID = ?", (CustomerID,)).fetchall()
+       cursor2 = connection.execute("SELECT * FROM Account, Bank WHERE CustomerID = ? AND Account.BankID = Bank.BankID", (CustomerID,)).fetchall()
+       connection.close()
+       return flask.render_template("payment.html", cursor = cursor, cursor2 = cursor2, CustomerID = CustomerID)
+
+@app.route('/paid/<CustomerID>', methods = ["POST"])
+def paid(CustomerID):
+       data = flask.request.form
+       CardNumber = data["CardNumber"]
+       AccountNumber = data["AccountNumber"]
+       return CardNumber + "\t" + AccountNumber
+
+@app.route('/insights/<CustomerID>')
+def insights(CustomerID):
+       today = dt.datetime.now()
+       month = today.month
+       months = ["Jan","Feb","Mar","April","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+
+       thismonth = months[month-1]
+       connection = sqlite3.connect("BBOOK.db")
+       cursor = connection.execute("SELECT CardNumber FROM CreditCard WHERE CustomerID = ?", (CustomerID,)).fetchall()
+       cards = []
+       results = []
+
+       for record in cursor:
+              cards.append(record[0])
+
+       for card in cards:              
+              cursor = connection.execute("SELECT CardNumber, SUM(Amount), Month, Category from CreditCardTransaction where CardNumber = ? and Month = ? group by Category ", (card, thismonth)).fetchall()
+              results.append(cursor)
+       connection.close()
+       return flask.render_template("insights.html", results = results, CustomerID = CustomerID)
+
+@app.route('/recommendations/<CustomerID>')
+def recommendations(CustomerID):
+       return "Hello " + CustomerID
+
+
+@app.route('/chart')
+def chart():
+    connection = sqlite3.connect("BBOOK.db")
+    cursor = connection.execute("SELECT SUM(Amount), Month from CreditCardTransaction where CardNumber = ? group by Month", (4544092911023330,)).fetchall()
+    connection.close()
+
+    labels = []
+    values = []
+    for record in cursor:
+           labels.append(record[1])
+           values.append(abs(record[0]))
+    legend = 'Monthly Data'
+    return flask.render_template('linechart.html', values=values, labels=labels, legend=legend)
+       
 #customer summary
 @app.route("/customer_summary/<Email>")
 def customer_summary(Email):
