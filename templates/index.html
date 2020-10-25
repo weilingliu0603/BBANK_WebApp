@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+    <head>
+	<title>BBANK</title>
+	<!--<link rel="stylesheet" href="styles.css">-->
+	<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='stylesV3.css') }}">
+	</head>
+	
+	<style>
+	.content {
+	max-width: 500px;
+	margin: auto;
+	}
+	</style>
+	
+<body>
+
+<div class="content">
+       <header>
+            <a href="{{url_for('index')}}"><img src="{{ url_for('static', filename='BBOOK.png') }}" width="200" height=""/> </a>
+        </header>
+		<form action = "{{ url_for('login') }}" method="POST">
+		
+	<table>
+			<tr>
+				<th><p align = "left">Email</p></th>
+				<th><p align = "left">Password</p></th>			
+			</tr>
+			<tr>
+				<td>
+					<input name = "Email">
+				</td>
+				<td>
+					<input name = "Password">
+				</td>				
+			</tr>
+			<tr>
+				<td><p align = "left">
+				<input type = "submit" value = "LOGIN"></p>
+				</td>
+			</tr>
+	</table>
+	</div>
+</body>
+</html>

@@ -1,0 +1,53 @@
+* {
+  box-sizing: border-box;
+  margin: 25;
+  padding: 0;
+  font-family: Helvetica;
+  
+
+}
+
+header {
+
+
+  display: flex;
+  align-items: center;
+  padding: 20px 10%;
+  text-align: center;
+
+}
+
+
+th, td {
+  padding: 5px;
+  text-align: left;
+  width: 1000px;
+}
+
+.linking a,
+.overlay__content a {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+  color: #000000;
+  text-decoration: none;
+  
+}
+
+.linking {
+  list-style: none;
+  display: flex;
+}
+
+.linking li {
+  padding: 0px 20px;
+}
+
+.linking li a {
+  transition: all 0.3s ease 0s;
+}
+
+.linking li a:hover {
+  color: #808080;
+}
+
+

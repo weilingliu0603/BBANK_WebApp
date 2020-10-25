@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+    <head>
+	<title>BBANK</title>
+	<!--<link rel="stylesheet" href="styles.css">-->
+	<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='stylesV3.css') }}">
+	</head>
+	
+	<style>
+	.content {
+	max-width: 500px;
+	margin: auto;
+	}
+	</style>
+	
+<body>
+       <header>
+            <a href="{{url_for('index')}}"><img src="{{ url_for('static', filename='BBOOK.png') }}" width="140" height=""/> </a>
+            <nav>
+                <ul class="linking">
+					<li><a href="{{url_for('registration')}}">View Accounts</a></li>
+					<li><a href="{{url_for('registration')}}">Transfer Funds</a></li>
+					<li><a href="{{url_for('registration')}}">Pay Credit Cards</a></li>
+					<li><a href="{{url_for('registration')}}">View Insights</a></li>
+					<li><a href="{{url_for('registration')}}">View Recommendations</a></li>
+				</ul>
+            </nav>
+        </header>
+		<header>
+		<table>
+			<tr>
+				<th><b>Deposit Accounts</b></th>
+			{% for record in cursor %}
+			</tr>
+			<tr>
+				<td>{{record[6]}}<br>{{record[2]}}<br>{{record[3]}}
+				</td>
+				<td><h3>SGD $ {{record[4]}}</h3></td>
+			{% endfor %}
+		</header>
+				
+</body>
+</html>
