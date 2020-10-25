@@ -128,8 +128,36 @@ def payment(CustomerID):
 def paid(CustomerID):
        data = flask.request.form
        CardNumber = data["CardNumber"]
-       AccountNumber = data["AccountNumber"]
-       return CardNumber + "\t" + AccountNumber
+       AccountNum = data["AccountNumber"]
+
+       connection = sqlite3.connect("BBOOK.db")
+       cursor = connection.execute("SELECT Balance FROM Account WHERE AccountNumber = ? ", (AccountNum,)).fetchall()
+       balance = cursor[0][0]
+
+       cursor = connection.execute("SELECT AmountDue FROM CreditCard WHERE CardNumber = ? ", (CardNumber,)).fetchall()
+       AmountDue = cursor[0][0]
+    
+       if balance < AmountDue:
+              cursor = connection.execute("SELECT SUM(Balance) FROM Account WHERE CustomerID = ? ", (CustomerID,)).fetchall()
+              Deposit = round(cursor[0][0],2)
+              cursor = connection.execute("SELECT SUM(AmountDue) FROM CreditCard WHERE CustomerID = ? ", (CustomerID,)).fetchall()
+              Credit = round(cursor[0][0],2)
+              connection.close()
+              return flask.render_template("home.html", CustomerID = CustomerID, Deposit=Deposit, Credit=Credit)         
+       else:
+              results = [{'status': 'success', 'message': 'if any'}]
+              connection.execute("UPDATE Account SET Balance = ? WHERE AccountNumber = ? ", (balance - AmountDue, AccountNum,))
+              connection.commit()
+              newamount = 0
+              connection.execute("UPDATE CreditCard SET AmountDue = ? WHERE CardNumber = ? ", (newamount, CardNumber,))
+              connection.commit()
+              cursor = connection.execute("SELECT SUM(Balance) FROM Account WHERE CustomerID = ? ", (CustomerID,)).fetchall()
+              Deposit = round(cursor[0][0],2)
+              cursor = connection.execute("SELECT SUM(AmountDue) FROM CreditCard WHERE CustomerID = ? ", (CustomerID,)).fetchall()
+              Credit = round(cursor[0][0],2)
+
+       connection.close()
+       return flask.render_template("home.html", CustomerID = CustomerID, Deposit=Deposit, Credit=Credit)
 
 @app.route('/insights/<CustomerID>')
 def insights(CustomerID):
