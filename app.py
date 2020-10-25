@@ -178,7 +178,15 @@ def insights(CustomerID):
               cursor = connection.execute("SELECT CardNumber, SUM(Amount), Month, Category from CreditCardTransaction where CardNumber = ? and Month = ? group by Category ", (card, thismonth)).fetchall()
               results.append(cursor)
        connection.close()
-       return flask.render_template("insights.html", results = results, CustomerID = CustomerID)
+
+       pie_labels = ["Online Shopping","B","C"]
+       pie_values = [300,100,600]
+       colors = ["#F7464A", "#46BFBD","#808080"]
+
+       return flask.render_template('pie_chart.html', title='Your Expenses in Oct', max=17000, set=zip(pie_values, pie_labels, colors),set2=zip(pie_labels, colors), CustomerID = CustomerID)
+
+
+       #return flask.render_template("insights.html", results = results, CustomerID = CustomerID)
 
 @app.route('/recommendations/<CustomerID>')
 def recommendations(CustomerID):
