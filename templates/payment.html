@@ -57,28 +57,43 @@ th, td {
 			
             </div>
 <div class="main">
+    <form action = "{{ url_for('paid', CustomerID = CustomerID ) }}" method="POST">
+	<table>
+	<tr>
+		<td>
+       <fieldset>
+          <legend>My Credit Cards</legend>
+          <p>
+             <label>Select card</label>
+             <select name="CardNumber" id="CardNumber">
+			   {% for record in cursor %}
+               <option value = {{record[0]}}>{{record[0]}}, SGD ${{record[6]}}</option>
+			   {% endfor %}
+             </select>
+          </p>
+       </fieldset>
+	   </td>
+	   		<td>
+       <fieldset>
+          <legend>My Savings Accounts</legend>
+          <p>
+             <label>Select account</label>
+               <select name="AccountNumber" id="AccountNumber">
+			   {% for record in cursor2 %}
+               <option value = {{record[3]}}>{{record[3]}}, {{record[6]}}, SGD ${{record[4]}}</option>
+			   {% endfor %}
+             </select>
+          </p>
+       </fieldset>
+	   </td>
+	   </tr>
+	   <tr>
+	   <td>
+	<input type = "submit" value = "Confirm Payment"></p>
+	</td>
+	</tr>
+    </form>
 
-		<table>
-			<tr>
-				<th><b>Deposit Accounts</b></th>
-			{% for record in cursor %}
-			</tr>
-			<tr>
-				<td>{{record[6]}}<br>{{record[2]}} Account<br>{{record[3]}}
-				</td>
-				<td><h3>SGD $ {{record[4]}}</h3></td>
-			{% endfor %}
-
-			<tr>
-				<th><b>Credit Cards</b></th>
-			{% for record in cursor2 %}
-			</tr>
-			<tr>
-				<td>{{record[1]}}<br>{{record[4]}}<br>{{record[0]}}
-				</td>
-				<td><h3>SGD $ {{record[6]}}</h3></td>
-			{% endfor %}
-		</table>
 </div>			
 </body>
 </html>

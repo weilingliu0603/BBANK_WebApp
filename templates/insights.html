@@ -57,28 +57,26 @@ th, td {
 			
             </div>
 <div class="main">
-
 		<table>
 			<tr>
-				<th><b>Deposit Accounts</b></th>
-			{% for record in cursor %}
+				<td><b>Your spending in {{results[0][0][2]}}</b></td>
 			</tr>
-			<tr>
-				<td>{{record[6]}}<br>{{record[2]}} Account<br>{{record[3]}}
-				</td>
-				<td><h3>SGD $ {{record[4]}}</h3></td>
-			{% endfor %}
+				{% for card in results %}
+					<tr><td><font color = "#0099FF">{{card[0][0]}}</font></td></tr>
+					<tr>
+					{% for record in card %}
+					<td>{{record[3]}}</td>
+					{% endfor %}
+					</tr>
+					<tr>
+					{% for record in card %}
+					<td>{{record[1]}}</td>
+					{% endfor %}
+					</tr>
+				{% endfor %}
+				
 
-			<tr>
-				<th><b>Credit Cards</b></th>
-			{% for record in cursor2 %}
-			</tr>
-			<tr>
-				<td>{{record[1]}}<br>{{record[4]}}<br>{{record[0]}}
-				</td>
-				<td><h3>SGD $ {{record[6]}}</h3></td>
-			{% endfor %}
-		</table>
-</div>			
+		</div>
+				
 </body>
 </html>

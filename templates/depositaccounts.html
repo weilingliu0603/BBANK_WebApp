@@ -57,7 +57,6 @@ th, td {
 			
             </div>
 <div class="main">
-
 		<table>
 			<tr>
 				<th><b>Deposit Accounts</b></th>
@@ -68,17 +67,7 @@ th, td {
 				</td>
 				<td><h3>SGD $ {{record[4]}}</h3></td>
 			{% endfor %}
-
-			<tr>
-				<th><b>Credit Cards</b></th>
-			{% for record in cursor2 %}
-			</tr>
-			<tr>
-				<td>{{record[1]}}<br>{{record[4]}}<br>{{record[0]}}
-				</td>
-				<td><h3>SGD $ {{record[6]}}</h3></td>
-			{% endfor %}
-		</table>
-</div>			
+		</div>
+				
 </body>
 </html>

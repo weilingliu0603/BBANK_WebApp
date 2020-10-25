@@ -1,50 +1,74 @@
 <!DOCTYPE html>
-    <head>
-	<title>BBANK</title>
-	<!--<link rel="stylesheet" href="styles.css">-->
-	<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='stylesV3.css') }}">
-	</head>
-	
-	<style>
-	.content {
-	max-width: 500px;
-	margin: auto;
-	}
-	</style>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {margin:0;}
+
+.navbar {
+  overflow: hidden;
+  background-color: #ffffff;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 20%;
+}
+
+.navbar a {
+  float: left;
+  display: block;
+  color: #000000;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+.navbar a:hover {
+  background: #ddd;
+  color: black;
+}
+
+.main {
+  padding: 15px;
+  margin-top: 150px;
+  height: 1000px; /* Used in this example to enable scrolling */
+}
+
+th, td {
+  padding: 5px;
+  text-align: left;
+  width: 600px;
+}
+
+</style>
+</head>
 	
 <body>
-       <header>
-            <a href="{{url_for('index')}}"><img src="{{ url_for('static', filename='BBOOK.png') }}" width="140" height=""/> </a>
-            <nav>
-                <ul class="linking">
-					<li><a href="{{url_for('registration')}}">View Accounts</a></li>
-					<li><a href="{{url_for('registration')}}">Transfer Funds</a></li>
-					<li><a href="{{url_for('registration')}}">Pay Credit Cards</a></li>
-					<li><a href="{{url_for('registration')}}">View Insights</a></li>
-					<li><a href="{{url_for('registration')}}">View Recommendations</a></li>
-				</ul>
-            </nav>
-        </header>
-		<header>
+		<div class="navbar">
+            <a href="{{url_for('main', CustomerID = CustomerID)}}"><img src="{{ url_for('static', filename='BBOOK.png') }}" width="100" height=""/> </a>
+
+					<a href="{{url_for('accounts', CustomerID = CustomerID)}}">View Accounts</a></li>
+					<a href="{{url_for('transfer', CustomerID = CustomerID)}}">Transfer Fund</a></li>
+					<a href="{{url_for('payment', CustomerID = CustomerID)}}">Pay Credit Cards</a></li>
+					<a href="{{url_for('insights', CustomerID = CustomerID)}}">View Insights</a></li>
+					<a href="{{url_for('recommendations', CustomerID = CustomerID)}}">View Recommendations</a></li>
+				
+			
+            </div>
+<div class="main">
+
 		<table>
 			<tr>
-				<th><b>Summary</b></th>
+				<th><b>Credit Cards</b></th>
+			{% for record in cursor %}
 			</tr>
 			<tr>
-				<td>What you have
-				<br>
-				<a href="{{url_for('accounts')}}"><img src="{{ url_for('static', filename='savings.png') }}" width="75" height=""/></a>
+				<td>{{record[1]}} {{record[4]}}<br>{{record[0]}}
 				</td>
-				<td><h3>SGD $ {{Deposit}}</h3></td>
-			</tr>
-			<tr>
-				<td>What you owe
-				<br>
-				<a href="{{url_for('creditcards')}}"><img src="{{ url_for('static', filename='creditcard.png') }}" width="75" height=""/></a>
-				</td>
-				<td><h3>SGD $ {{Credit}}</h3></td>
-			</tr>
-		</header>
-				
+				<td><h3>SGD $ {{record[6]}}</h3></td>
+			{% endfor %}
+		</table>
+</div>			
 </body>
 </html>
