@@ -232,7 +232,7 @@ def insights(CustomerID):
               pie_values.append(abs(record[0]))            
 
 
-       return flask.render_template('pie_chart.html', title='Your Expenses in Oct', max=17000, set=zip(pie_values, pie_labels, colors),set2=zip(pie_labels, colors), CustomerID = CustomerID)
+       return flask.render_template('pie_chart.html', title='Your Expenses in '+thismonth+ ' by Category', max=17000, set=zip(pie_values, pie_labels, colors),set2=zip(pie_labels, colors), CustomerID = CustomerID)
 
 
        #return flask.render_template("insights.html", results = results, CustomerID = CustomerID)
