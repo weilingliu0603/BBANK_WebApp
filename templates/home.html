@@ -11,7 +11,7 @@ body {margin:0;}
   position: fixed;
   top: 0;
   width: auto;
-  height: 20%;
+  height: 30%;
 }
 
 .navbar a {
@@ -19,9 +19,9 @@ body {margin:0;}
   display: block;
   color: #000000;
   text-align: center;
-  padding: 14px 16px;
+  padding: 10px 14px;
   text-decoration: none;
-  font-size: 17px;
+  font-size: 14px;
 }
 
 .navbar a:hover {
@@ -30,7 +30,7 @@ body {margin:0;}
 }
 
 .main {
-  padding: 15px;
+  padding: 14px;
   margin-top: 150px;
   height: 1000px; /* Used in this example to enable scrolling */
 }
@@ -38,7 +38,7 @@ body {margin:0;}
 th, td {
   padding: 5px;
   text-align: left;
-  width: 600px;
+  width: 400px;
 }
 
 </style>
@@ -46,13 +46,31 @@ th, td {
 	
 <body>
 		<div class="navbar">
+		<table>
+		<tr>
+		<td>
             <a href="{{url_for('main', CustomerID = CustomerID)}}"><img src="{{ url_for('static', filename='BBOOK.png') }}" width="100" height=""/> </a>
+		</td>
+		<td>
 
-					<a href="{{url_for('accounts', CustomerID = CustomerID)}}">View Accounts</a></li>
-					<a href="{{url_for('transfer', CustomerID = CustomerID)}}">Transfer Fund</a></li>
-					<a href="{{url_for('payment', CustomerID = CustomerID)}}">Pay Credit Cards</a></li>
-					<a href="{{url_for('insights', CustomerID = CustomerID)}}">View Insights</a></li>
-					<a href="{{url_for('recommendations', CustomerID = CustomerID)}}">View Recommendations</a></li>
+					<a href="{{url_for('accounts', CustomerID = CustomerID)}}">View Accounts</a>
+					
+					
+					<a href="{{url_for('transfer', CustomerID = CustomerID)}}">Transfer Fund</a>
+					
+					
+					<a href="{{url_for('payment', CustomerID = CustomerID)}}">Pay Credit Cards</a>
+					
+					
+					<a href="{{url_for('insights', CustomerID = CustomerID)}}">View Insights</a>
+					
+					
+					<a href="{{url_for('recommendations', CustomerID = CustomerID)}}">View Recommendations</a>
+					
+					</td>
+					
+				</tr>
+				</table>
 				
 			
             </div>
