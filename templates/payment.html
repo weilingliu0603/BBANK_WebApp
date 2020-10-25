@@ -77,7 +77,7 @@ th, td {
              <label>Select card</label>
              <select name="CardNumber" id="CardNumber">
 			   {% for record in cursor %}
-               <option value = {{record[0]}}>{{record[0]}}, SGD ${{record[6]}}</option>
+               <option value = {{record[0]}}>{{record[0]}}, SGD ${{record[6] | round(2, 'floor')}}</option>
 			   {% endfor %}
              </select>
           </p>
@@ -92,7 +92,7 @@ th, td {
              <label>Select account</label>
                <select name="AccountNumber" id="AccountNumber">
 			   {% for record in cursor2 %}
-               <option value = {{record[3]}}>{{record[3]}}, {{record[6]}}, SGD ${{record[4]}}</option>
+               <option value = {{record[3]}}>{{record[3]}}, {{record[6]}}, SGD ${{record[4] | round(2, 'floor')}}</option>
 			   {% endfor %}
              </select>
           </p>
