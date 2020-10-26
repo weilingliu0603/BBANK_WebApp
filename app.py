@@ -170,7 +170,7 @@ def transferred(CustomerID):
 def paid(CustomerID):
        today = dt.datetime.now()
        date = str(today.day)+"/"+str(today.month)+"/"+str(today.year)
-       time = "20:00:00"
+       time = time = str(today.hour)+":"+str(today.min)+":00"
        data = flask.request.form
        CardNumber = data["CardNumber"]
        AccountNum = data["AccountNumber"]
